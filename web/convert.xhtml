@@ -1,0 +1,199 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Valetudo Map SVG Converter</title>
+	<meta name="viewport" content="width=device-width"/>
+	<style>
+		section {
+			background: #eee;
+			border-radius: 1em;
+		}
+		h2 {
+			margin-top: 0;
+			text-align: center;
+		}
+		#a {
+			display: flex;
+			align-items: center;
+			gap: .5em;
+			flex-wrap: wrap;
+			align-content: center;
+			justify-content: center;
+		}
+		#a div {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			align-self: stretch;
+			gap: .5em;
+		}
+		#a div div {
+			align-self: stretch;
+		}
+		#a {
+			font-size: 2em;
+		}
+		section {
+			font-size: .5em;
+			padding: 1em;
+			height: 100%;
+			display: block;
+			width: 100%;
+			margin: 0 1em;
+			box-sizing: border-box;
+		}
+		section a + input[type=file] {
+			display: none;
+		}
+		section input[type=file] + input[type=reset] {
+			display: none;
+		}
+		input[type=reset] {
+			float: right;
+		}
+		section a + input[type=file] + input[type=reset] {
+			display: inherit;
+		}
+		form {
+			margin-top: 1em;
+		}
+		p {
+			flex-basis: 0;
+		}
+		.imgbox img {
+			display: block;
+			margin: auto;
+			max-height: 100%;
+		}
+		.imgbox {
+			clear: both;
+			height: 30em;
+			margin-top: 1em;
+		}
+	</style>
+</head>
+<body>
+	<h1>Valetudo Map SVG Converter</h1>
+	<p>This converter is client-side only and bidirectional. Supply either Map JSON (and an optional template), that will be converted to Map SVG, or Map SVG that will be converted to Map JSON (and the template).</p>
+	<div id="a">
+		<div>
+			<section id="template">
+				<h2>Template SVG</h2>
+				The template SVG defines the styling. If omitted, a minified <a href="template.svg" download="template.svg">default template</a> is used.
+				<form><input type="file" accept="image/svg+xml,.svg"/><input type="reset"/></form>
+			</section>
+			+
+			<section id="json">
+				<h2>Valetudo Map JSON</h2>
+				The classic Valetudo Map JSON
+				<form><input type="file" accept="application/json,.json"/><input type="reset"/></form>
+			</section>
+		</div>
+		=
+		<div>
+			<section id="svg" draggable="true">
+				<h2>Valetudo Map SVG</h2>
+				An alternative, renderable representation of the Valetudo Map
+				<form><input type="file" accept="image/svg+xml,.svg"/><input type="reset"/></form>
+				<div class="imgbox"></div>
+			</section>
+		</div>
+	</div>
+	<a id="download"></a>
+	<script type="module" async="async">
+		import { preprocessMap, mapToSvg } from "./from-json.js";
+		import { svgToMap } from "./to-json.js";
+		import { parseTemplate } from "./template.js";
+		
+		let state = {};
+		
+		let change = {
+			template: str => {
+				state.parsed = str ? parseTemplate(str) : undefined;
+				state.pmap ??= state.map ? preprocessMap(state.map) : null;
+				state.svg = state.pmap ? new File([mapToSvg(state.pmap, state.parsed)], state.name + ".svg", { type: "image/svg+xml" }) : null;
+			},
+			json: str => {
+				state.name = state.json?.name.replace(/.json$/, "");
+				state.map = JSON.parse(str ?? null);
+				state.pmap = state.map ? preprocessMap(state.map) : null;
+				state.svg = state.pmap ? new File([mapToSvg(state.pmap, state.parsed)], state.name + ".svg", { type: "image/svg+xml" }) : null;
+			},
+			svg: str => {
+				state.name = state.svg?.name.replace(/.svg$/, "");
+				state.map = str != null ? svgToMap(str) : null;
+				state.json = state.map ? new File([JSON.stringify(state.map), "\n"], state.name + ".json", { type: "application/json" }) : null;
+				state.parsed = str != null ? parseTemplate(str) : undefined;
+				state.template = state.parsed ? new File([mapToSvg(undefined, state.parsed)], state.name + ".template.svg", { type: "image/svg+xml" }) : null;
+			},
+		};
+
+		let update = [];
+
+		Object.keys(change).forEach(type => {
+			let root = document.getElementById(type);
+			let input = root.querySelector("input[type=file]");
+			let imgbox = root.querySelector(".imgbox");
+			let url;
+
+			async function handleChangeEvent(ev) {
+				let file = ev.srcElement.files?.[0];
+				state[type] = file;
+				let str = await file?.text();
+				if (state[type] !== file) {
+					return;
+				}
+				try {
+					change[type](str);
+				} catch (e) {
+					console.error(e);
+					alert(e);
+					change[type](null);
+				}
+				update.forEach(f=>f());
+			}
+			root.addEventListener("change", handleChangeEvent);
+			root.addEventListener("reset", handleChangeEvent);
+			
+			update.push(() => {
+				let file = state[type];
+				let dt = new DataTransfer();
+				if (file) {
+					dt.items.add(file);
+				}
+				input.files = dt.files;
+				root.querySelectorAll("a[href^='blob:'], img[src^='blob:']").forEach(el => {
+					URL.revokeObjectURL(url);
+					el.remove();
+				});
+				if (file) {
+					url = URL.createObjectURL(file);
+					let a = document.createElement("a");
+					a.href = url;
+					a.download = file.name;
+					a.innerText = file.name;
+					input.parentNode.insertBefore(a, input);
+					if (imgbox) {
+						let img = document.createElement("img");
+						img.src = url;
+						imgbox.append(img);
+					}
+				}
+				root.draggable = !!file;
+			});
+			
+			root.addEventListener("dragover", ev => ev.preventDefault());
+			root.addEventListener("drop", ev => {
+				ev.preventDefault();
+				input.files = ev.dataTransfer.files;
+				input.dispatchEvent(new Event("change", { bubbles: true }));
+			});
+			root.addEventListener("dragstart", ev => {
+				let [file] = input.files;
+				ev.dataTransfer.setData("DownloadURL", `${file.type}:${file.name}:${url}`);
+				ev.dataTransfer.items.add(file);
+			});
+		});
+	</script>
+</body>
+</html>

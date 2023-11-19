@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+	<!-- Markers and colors from https://github.com/Hypfer/Valetudo -->
+	<!-- Copyright 2023 Sören Beye -->
+	<!-- modified to optimize space -->
+	<marker id="robot" viewBox="-16 -16 32 32" markerWidth="32" markerHeight="32" orient="auto">
+		<circle r="14.95" fill="#fff" stroke="#7f7f7f" stroke-width="2.11"/>
+		<path d="m 2.3343,-14.5 0,29" stroke="#7f7f7f" stroke-width="2.11"/>
+		<circle cx="2.335" r="4.0931" fill="#fff" stroke="#7f7f7f" stroke-width="1.0547"/>
+	</marker>
+	<marker id="charger" viewBox="-16 -16 32 32" markerWidth="32" markerHeight="32">
+		<circle r="14.95" fill="#7f7f7f" stroke="#333" stroke-width="2.11"/>
+		<path d="m-3.05 12.385 8.7632-13.614h-4.6476l2.0375-11.141-8.8115 14.144h4.6754z" fill="#fff" stroke="#0076ff" stroke-width="1.0431"/>
+	</marker>
+	<marker id="marker_active" viewBox="-16 -48 32 48" markerWidth="32" markerHeight="48">
+		<path d="m14.063 -24.229-14.06 24.229-14.06-24.229h14.059z" fill="#333" stroke-width="6.2083"/>
+		<ellipse cy="-31.814" rx="13.283" ry="13.448" fill="#7f7f7f" stroke="#0076ff" stroke-width="3.258"/>
+		<ellipse cy="-31.814" rx="14.95" ry="15.125" fill="none" stroke="#333" stroke-width="2.11"/>
+	</marker>
+	<marker id="obstacle" viewBox="-16 -16 32 32" markerWidth="32" markerHeight="32">
+		<circle r="14.95" fill="#7f7f7f" stroke="#333" stroke-width="2.11"/>
+		<path d="m-0.87 5.725-0.85234-12.041v-5.0365h3.4558v5.0365l-0.80585 12.041zm-0.72836 5.6409v-3.1769h3.2079v3.1769z" fill="#fff" stroke="#0076ff" stroke-width=".79369"/>
+	</marker>
+	<style>
+		#entities {
+			fill: none;
+		}
+		.virtual_wall {
+			stroke: red;
+			stroke-opacity: 0.75;
+			stroke-width: 5;
+			stroke-linecap: round;
+		}
+		.path, .predicted_path {
+			stroke: white;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+		}
+		.predicted_path {
+			stroke-dasharray: 4,4;
+		}
+		.active_zone {
+			stroke: #35911a;
+			fill: #6bf442;
+			fill-opacity: 0.3;
+			stroke-width: 2;
+		}
+		.no_go_area {
+			fill: red;
+			stroke: red;
+			fill-opacity: 0.25;
+			stroke-opacity: 0.75;
+			stroke-width: 2;
+		}
+		.no_mop_area {
+			fill: #c800ff;
+			stroke: #c800ff;
+			fill-opacity: 0.15;
+			stroke-opacity: 0.6;
+			stroke-width: 2;
+		}
+		.charger_location {
+			marker-end: url(#charger);
+		}
+		.robot_position {
+			marker-end: url(#robot);
+		}
+		.go_to_target {
+			marker-end: url(#marker_active);
+		}
+		.obstacle {
+			marker-end: url(#obstacle);
+		}
+
+		#layers { shape-rendering: crispEdges; }
+		.floor { fill: #0076ff; }
+		.wall { fill: #333; }
+		.segment.color1 { fill: #19A1A1; }
+		.segment.color2 { fill: #7AC037; }
+		.segment.color3 { fill: #DF5618; }
+		.segment.color4 { fill: #F7C841; }
+		.segment { fill: #9966CC; }
+
+		/* Uncomment this to highlight hovered rooms: */
+		/*
+		.path { pointer-events: none; }
+		.segment { transition: fill .2s; }
+		.segment:hover { fill: #fd0; }
+		*/
+	</style>
+	<g id="layers"/>
+	<g id="entities"/>
+</svg>

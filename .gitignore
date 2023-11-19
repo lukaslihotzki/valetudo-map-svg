@@ -1,0 +1,5 @@
+data/
+dist/
+lib/default-template.js
+node_modules/
+web/*.js

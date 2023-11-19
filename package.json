@@ -1,0 +1,44 @@
+{
+	"name": "valetudo-map-svg",
+	"version": "0.1.0",
+	"description": "Convert Valetudo Map JSON to Valetudo Map SVG and back",
+	"license": "Apache-2.0",
+	"type": "module",
+	"files": [
+		"lib/",
+		"dist/"
+	],
+	"exports": {
+		"./from-json": {
+			"require": "./dist/from-json.cjs",
+			"import": "./lib/from-json.js"
+		},
+		"./to-json": {
+			"require": "./dist/to-json.cjs",
+			"import": "./lib/to-json.js"
+		},
+		"./template": {
+			"require": "./dist/template.cjs",
+			"import": "./lib/template.js"
+		}
+	},
+	"bin": {
+		"valetudo-map-svg": "cli.js"
+	},
+	"scripts": {
+		"test": "eslint lib/ '*.js' && ./test.sh",
+		"prepare_web": "esbuild lib/from-json.js lib/to-json.js lib/template.js --outdir=web/ --format=esm --bundle --splitting",
+		"prepare": "node build-template.js && esbuild lib/from-json.js lib/to-json.js lib/template.js --outdir=dist/ --format=cjs --out-extension:.js=.cjs --bundle --external:saxes --external:@datastructures-js"
+	},
+	"dependencies": {
+		"@datastructures-js/heap": "4.3.2",
+		"saxes": "^6.0.0"
+	},
+	"devDependencies": {
+		"@stylistic/eslint-plugin": "^1.4.0",
+		"clean-css": "^5.3.2",
+		"esbuild": "^0.19.6",
+		"eslint": "^8.54.0",
+		"eslint-plugin-regexp": "^2.1.1"
+	}
+}

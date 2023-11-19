@@ -1,0 +1,74 @@
+{
+  "env": {
+	"browser": true,
+	"commonjs": true,
+	"es6": true,
+	"node": true,
+	"mocha": true
+  },
+  "plugins": ["regexp", "@stylistic"],
+  "extends": ["eslint:recommended", "plugin:@stylistic/recommended-extends", "plugin:regexp/recommended"],
+  "parserOptions": {
+	"ecmaVersion": 13,
+	"sourceType": "module"
+  },
+  "settings": {
+	"jsdoc": {
+	  "mode": "closure",
+	  "tagNamePreference": {
+		"returns": "returns",
+		"augments": "extends"
+	  }
+	}
+  },
+  "rules": {
+	"no-console": "error",
+	"no-labels": "error",
+	"max-classes-per-file": "error",
+	"eqeqeq": ["error", "always", {"null": "ignore"}],
+	"curly": "error",
+	"default-case-last": "error",
+	"block-scoped-var": "error",
+	"no-new": "error",
+	"no-multi-str": "error",
+	"no-new-wrappers": "error",
+	"no-sequences": "error",
+	"no-self-compare": "error",
+	"no-multi-assign": "error",
+	"no-whitespace-before-property": "error",
+	"no-magic-numbers": ["off", { "ignoreArrayIndexes": true }],
+	"no-unused-vars": ["warn", { "args": "none" }],
+	"operator-linebreak": ["error", "before"],
+	"@stylistic/array-element-newline": "off", 
+	"@stylistic/arrow-parens": ["error", "as-needed"],
+	"@stylistic/block-spacing": ["error", "always"],
+	"@stylistic/brace-style": ["error", "1tbs"],
+	"@stylistic/comma-dangle": ["error", "always-multiline"],
+	"@stylistic/dot-location": "off", 
+	"@stylistic/function-call-argument-newline": "off", 
+	"@stylistic/indent": ["error", "tab"],
+	"@stylistic/max-len": ["error", 100], 
+	"@stylistic/multiline-ternary": "off", 
+	"@stylistic/no-tabs": "off",
+	"@stylistic/nonblock-statement-body-position": "off",
+	"@stylistic/object-curly-newline": "off",
+	"@stylistic/object-curly-spacing": ["error", "always"],
+	"@stylistic/object-property-newline": "off", 
+	"@stylistic/one-var-declaration-per-line": "off", 
+	"@stylistic/padded-blocks": ["error", "never"], 
+	"@stylistic/padding-line-between-statements": "off", 
+	"@stylistic/quote-props": "off", 
+	"@stylistic/quotes": ["error", "double", {"avoidEscape": true}], 
+	"@stylistic/semi": ["error", "always"], 
+	"@stylistic/space-before-function-paren": ["error", "never"]
+  },
+  "overrides": [
+	{
+	  "files": ["./*.js"],
+	  "rules": {
+	  	"no-global-assign": "off",
+		"no-console": "off"
+	  }
+	}
+  ]
+}
